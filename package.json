@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-context-panel",
+  "version": "0.1.0",
+  "description": "Claude-Code-style context breakdown panel for the OpenCode CLI sidebar",
+  "type": "module",
+  "license": "MIT",
+  "author": "Steammax",
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "tui",
+    "context",
+    "tokens"
+  ],
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/index.ts",
+    "./tui": "./src/tui.tsx",
+    "./rpc": "./src/rpc.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.0.32"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.6.6",
+    "@opentui/solid": ">=0.6.6",
+    "solid-js": ">=1.9.0"
+  },
+  "peerDependenciesMeta": {
+    "@opentui/core": {
+      "optional": true
+    },
+    "@opentui/solid": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@opentui/core": "^0.6.6",
+    "@opentui/solid": "^0.6.6",
+    "solid-js": "^1.9.17",
+    "typescript": "^5.9.0"
+  }
+}
