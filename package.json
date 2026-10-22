@@ -28,7 +28,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@opencode/plugin": "^2.0.32"
+    "@opencode/plugin": "^2.1.2"
   },
   "peerDependencies": {
     "@opentui/core": ">=0.6.6",

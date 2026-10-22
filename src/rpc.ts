@@ -51,6 +51,10 @@ export const ContextPanelRpc = Rpc.define({
               additionalProperties: false,
             },
           },
+          compaction: {
+            type: "string",
+            enum: ["running", "done"],
+          },
         },
         required: ["categories"],
         additionalProperties: false,
@@ -76,4 +80,10 @@ export interface BreakdownCategory {
 /** Categories with a non-zero footprint; an empty list means "nothing recorded yet". */
 export interface Breakdown {
   categories: BreakdownCategory[]
+  /**
+   * Set while a compaction is running, and kept after it ends until the next
+   * request measures the result. A compaction never goes through the model
+   * request the snapshot is taken from, so the panel needs to be told.
+   */
+  compaction?: "running" | "done"
 }

@@ -1,4 +1,4 @@
-import type { BreakdownCategory, BreakdownItem } from "./rpc"
+import type { Breakdown, BreakdownCategory, BreakdownItem } from "./rpc"
 
 /**
  * Turns the request that OpenCode actually sent to the model into the
@@ -264,4 +264,28 @@ export function buildCategories(request: RequestShape, mcpServers: string[]): Br
   categorizeSystem(request.system ?? [], buckets)
 
   return ORDER.filter((key) => buckets[key].tokens > 0).map((key) => buckets[key].result())
+}
+
+/**
+ * What a compaction leaves behind: the system prompt, the tools and the memory
+ * files are untouched, while the transcript is replaced by the summary. Until
+ * the next request measures the result, this is all the panel can show, so the
+ * snapshot is marked as an estimate.
+ */
+export function compactedBreakdown(previous: Breakdown, summary: string): Breakdown {
+  const tokens = estimateTokens(summary)
+  const categories = previous.categories
+    .map((category) =>
+      category.key === "messages"
+        ? {
+            key: category.key,
+            label: category.label,
+            tokens,
+            items: tokens > 0 ? [{ label: "summary", tokens }] : [],
+          }
+        : category,
+    )
+    .filter((category) => category.tokens > 0)
+
+  return { categories, compaction: "done" }
 }

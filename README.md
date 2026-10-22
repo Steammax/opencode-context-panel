@@ -61,7 +61,7 @@ disappears — nothing breaks.
 
 ## Install
 
-Requires OpenCode 2.0.x (built and tested against 2.0.32).
+Requires OpenCode 2.1.x (built and tested against 2.1.2).
 
 ### From npm
 
@@ -118,6 +118,10 @@ The panel appears at the top of the sidebar; the sidebar must be open.
   `System notes`) come from the same transcript the model receives, split by part type.
 - `System notes` covers system-role messages injected mid-conversation (for example
   MCP instruction updates).
+- `/compact` is its own request and never goes through the hook the snapshot is taken
+  from, so the panel follows the compaction events instead: `compacting…` while it
+  runs, then the summary replaces the transcript and the total is marked `~` — an
+  estimate, until the next message measures it exactly.
 
 ## License
 

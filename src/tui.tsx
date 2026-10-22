@@ -15,7 +15,14 @@ const PERCENT_WIDTH = 6
 const REFRESH_DEBOUNCE_MS = 400
 const TICK_THROTTLE_MS = 250
 
-type SessionEvent = "session.step.ended" | "session.idle" | "session.model.selected" | "session.usage.updated"
+type SessionEvent =
+  | "session.step.ended"
+  | "session.idle"
+  | "session.model.selected"
+  | "session.usage.updated"
+  | "session.compaction.started"
+  | "session.compaction.ended"
+  | "session.compaction.failed"
 
 interface Usage {
   /** Tokens the model read: fresh input plus both cache counters. */
@@ -190,7 +197,22 @@ function Panel(props: { sessionID: string }) {
     return newest
   })
 
+  /** The compaction state the server reports, if any. */
+  const state = () => snapshot()?.compaction
+
+  /** What the categories measure, in the estimator's units. */
+  const measuredTokens = createMemo(() =>
+    (snapshot()?.categories ?? []).reduce((sum, category) => sum + category.tokens, 0),
+  )
+
   const usage = createMemo<Usage | undefined>(() => {
+    // After a compaction the transcript is one summary and no request has
+    // measured it yet, so the categories are the only size there is.
+    if (state() === "done") {
+      const measured = measuredTokens()
+      return measured > 0 ? { prompt: measured, used: measured } : undefined
+    }
+
     const tokens = latest()?.tokens
     if (!tokens) return undefined
     const prompt = (tokens.input ?? 0) + (tokens.cache?.read ?? 0) + (tokens.cache?.write ?? 0)
@@ -215,7 +237,7 @@ function Panel(props: { sessionID: string }) {
     const sizes = usage()
     if (!snap || !sizes) return []
 
-    const measured = snap.categories.reduce((sum, category) => sum + category.tokens, 0)
+    const measured = measuredTokens()
     const scale = measured > 0 && sizes.prompt > 0 ? sizes.prompt / measured : 1
     const palette = ctx.theme.categorical
 
@@ -253,9 +275,11 @@ function Panel(props: { sessionID: string }) {
     return segments.filter((segment) => segment.tokens > 0)
   })
 
-  /** Explains an empty panel: no request yet, no snapshot, or a failed RPC. */
+  /** Explains an empty or provisional panel: a compaction, no snapshot, a failed RPC. */
   const hint = createMemo<string | undefined>(() => {
     if (failed()) return "unavailable"
+    if (state() === "running") return "compacting\u2026"
+    if (state() === "done") return "estimated until the next request"
     if (!usage()) return "waiting for first request"
     if (!rows().length) return "no snapshot for this session yet"
     return undefined
@@ -265,9 +289,11 @@ function Panel(props: { sessionID: string }) {
     const sizes = usage()
     const max = limit()
     if (!sizes) return undefined
+    // A compacted context has no provider measurement yet, so its size is marked as an estimate.
+    const mark = state() === "done" ? "~" : ""
     return {
       percent: max ? percent(sizes.used, max) : "",
-      total: max ? `${fmt(sizes.used)} / ${fmt(max)}` : `${fmt(sizes.used)} tokens`,
+      total: max ? `${mark}${fmt(sizes.used)} / ${fmt(max)}` : `${mark}${fmt(sizes.used)} tokens`,
     }
   })
 
@@ -279,6 +305,9 @@ function Panel(props: { sessionID: string }) {
     onSession("session.idle", scheduleRefresh),
     onSession("session.model.selected", scheduleRefresh),
     onSession("session.usage.updated", scheduleTick),
+    onSession("session.compaction.started", scheduleRefresh),
+    onSession("session.compaction.ended", scheduleRefresh),
+    onSession("session.compaction.failed", scheduleRefresh),
   ]
 
   onCleanup(() => {
