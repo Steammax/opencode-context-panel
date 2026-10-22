@@ -89,6 +89,10 @@ Then reference it in your OpenCode config (`~/.config/opencode/opencode.json`):
 A global install (`npm install -g`) does **not** work: the loader resolves the package
 relative to the config directory, and Bun does not search npm's global root.
 
+The package has no runtime dependencies: OpenCode itself provides `@opencode/plugin`,
+OpenTUI and Solid, and its loader rejects those loaded from a plugin's own
+`node_modules`, so an install pulls nothing but these 38 KB.
+
 ### Manually, into the plugin directory
 
 OpenCode also discovers plugin folders under `<config>/plugins/<name>/`. Copy the
