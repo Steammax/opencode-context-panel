@@ -67,8 +67,15 @@ Requires OpenCode 2.1.x (built and tested against 2.1.2).
 
 ### From npm
 
+Install it into the OpenCode config directory, so the plugin loader's own resolver
+finds it:
+
 ```sh
-npm install -g opencode-context-panel
+npm install --prefix ~/.config/opencode opencode-context-panel
+```
+
+```powershell
+npm install --prefix "$env:USERPROFILE\.config\opencode" opencode-context-panel
 ```
 
 Then reference it in your OpenCode config (`~/.config/opencode/opencode.json`):
@@ -78,6 +85,9 @@ Then reference it in your OpenCode config (`~/.config/opencode/opencode.json`):
   "plugins": ["opencode-context-panel"]
 }
 ```
+
+A global install (`npm install -g`) does **not** work: the loader resolves the package
+relative to the config directory, and Bun does not search npm's global root.
 
 ### Manually, into the plugin directory
 
