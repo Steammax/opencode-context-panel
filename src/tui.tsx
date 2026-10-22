@@ -291,9 +291,13 @@ function Panel(props: { sessionID: string }) {
     if (!sizes) return undefined
     // A compacted context has no provider measurement yet, so its size is marked as an estimate.
     const mark = state() === "done" ? "~" : ""
+    const used = `${mark}${fmt(sizes.used)}`
     return {
       percent: max ? percent(sizes.used, max) : "",
-      total: max ? `${mark}${fmt(sizes.used)} / ${fmt(max)}` : `${mark}${fmt(sizes.used)} tokens`,
+      // The label inside the bar occupies the same two columns as the rows below,
+      // so the used number right-aligns with the token column and the limit with
+      // the percentages. The padding also masks the bar behind the label.
+      label: ` ${used.padStart(TOKENS_WIDTH)} ${(max ? `/ ${fmt(max)}` : "tokens").padStart(PERCENT_WIDTH)}`,
     }
   })
 
@@ -346,7 +350,7 @@ function Panel(props: { sessionID: string }) {
           <Show when={header()}>
             {(value) => (
               <text fg={ctx.theme.text.muted} bg={ctx.theme.background.base} flexShrink={0} height={1} selectable={false}>
-                {` ${value().total}`}
+                {value().label}
               </text>
             )}
           </Show>
