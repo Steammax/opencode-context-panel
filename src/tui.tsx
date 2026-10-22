@@ -346,7 +346,7 @@ function Panel(props: { sessionID: string }) {
           <Show when={header()}>
             {(value) => (
               <text fg={ctx.theme.text.muted} bg={ctx.theme.background.base} flexShrink={0} height={1} selectable={false}>
-                {` ${value().total} `}
+                {` ${value().total}`}
               </text>
             )}
           </Show>
