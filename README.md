@@ -3,7 +3,7 @@
 A [Claude Code](https://claude.com/claude-code)-style **Context** panel for the OpenCode CLI sidebar:
 where the context window actually goes, broken down by category.
 
-![Context panel](docs/screenshot.png)
+![Context panel](https://raw.githubusercontent.com/Steammax/opencode-context-panel/main/docs/screenshot.png)
 
 A real capture of the panel in the sidebar (OpenCode 2.1.2, 1M-token window):
 the numbers below are the same layout with a longer session.

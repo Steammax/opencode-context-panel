@@ -6,6 +6,14 @@
   "type": "module",
   "license": "MIT",
   "author": "Steammax",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steammax/opencode-context-panel.git"
+  },
+  "homepage": "https://github.com/Steammax/opencode-context-panel#readme",
+  "bugs": {
+    "url": "https://github.com/Steammax/opencode-context-panel/issues"
+  },
   "keywords": [
     "opencode",
     "opencode-plugin",
@@ -25,7 +33,8 @@
     "./rpc": "./src/rpc.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck"
   },
   "dependencies": {
     "@opencode/plugin": "^2.1.2"
