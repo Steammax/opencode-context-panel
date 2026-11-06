@@ -63,7 +63,13 @@ disappears — nothing breaks.
 
 ## Install
 
-Requires OpenCode 2.1.x (built and tested against 2.1.2).
+Requires OpenCode **2.2.0 or newer** (built and tested against 2.2.5).
+
+> **Do not use 2.1.3 / 2.1.4:** the `cli.json` config migration in those
+> versions silently stopped loading TUI plugins from the plugins directory —
+> the server half still loads, so the panel just disappears without any error
+> ([anomalyco/opencode#42051](https://github.com/anomalyco/opencode/issues/42051)).
+> Fixed in 2.2.0; `npm i -g @opencode/cli@latest` restores the panel.
 
 ### From npm
 
